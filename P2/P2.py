@@ -13,7 +13,8 @@ def user_greeting(username):
     par1 = request.args.get('catname')
     return '''  <!DOCTYPE html>
                 <head>
-                <link rel="stylesheet" type="text/css" href="/static/style.css">
+                  <link rel="stylesheet" type="text/css" href="/static/style.css">
+                </head>
                 <html>
                   <body>
                     <h1>Hello %s!</h1>
