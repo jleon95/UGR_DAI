@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" type="text/css" href="/static/style.css">
+        <title>Práctica 3</title>
+    </head>
+    <body>
+        <header>
+            <div name="logo">
+                <a href="/"><img src="/static/catlogo.png" height="120px"/></a>
+            </div>
+            <div name="titles">
+                <h1>This is the title of my website</h1>
+                <h3>And this is its subtitle</h3>
+            </div>
+            {% if username %}
+                <div name="welcome">
+                    <p>Welcome, {{ username }}</p>
+                    <form action="/logout" method="post" name="logout">
+                        <input type="submit" value="Log out"/>
+                    </form>
+                </div>
+            {% else %}
+                <div name="anonymous">
+                    <form action="/login" method="post" name="login">
+                        User:<br>
+                        <input type="text" name="user" placeholder="Your username" value="" required/>
+                        <br><br>
+                        <input type="submit" value="Log in"/>
+                    </form>
+                </div>
+            {% endif %}
+        </header>
+        <nav>
+            <ul>
+                {% if username %}
+                    <li><a href="/profile">Profile</a></li>
+                {% else %}
+                    <li><a href="/register">Register</a></li>
+                {% endif %}
+                <li><a href="/lorem">Lorem ipsum</a></li>
+            </ul>
+            <br>
+            <ul>
+                <li><a href={{ last1 }}>Last page</a></li>
+                <li><a href={{ last2 }}>Second-to-last page</a></li>
+                <li><a href={{ last3 }}>Antepenultimate page</a></li>
+            </ul>
+        </nav>
+        <section>
+            <img src="/static/deepdreamcat.jpg">
+        </section>
+        <footer>
+            Javier León Palomares. Copyleft.
+        </footer>
+    </body>
+</html>
