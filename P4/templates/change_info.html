@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block styles %}
+  <link href="/static/register_style.css" rel="stylesheet">
+{% endblock %}
+{% block content %}
+  <div class="container data-form">
+
+    <form method="post" class="form-signup">
+      <h2 class="form-signup-heading">Change personal data</h2>
+      <input name="newname" type="names" class="form-control" placeholder={{ name }} value={{ name }} required>
+      <input name="newsurname" type="names" class="form-control" placeholder={{ surname }} value={{ surname }} required>
+      <br>
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Update</button>
+    </form>
+
+  </div>
+{% endblock %}
