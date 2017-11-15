@@ -3,6 +3,7 @@
 from flask import Flask, request, render_template, session, redirect, url_for
 import shelve
 import pymongo as pym
+import json
 app = Flask(__name__)
 
 app.secret_key = "whatever"
@@ -114,30 +115,48 @@ def ai():
 # 'borough': 'Manhattan',
 # 'name': 'Sweet  Generation'}
 
-@app.route('/restaurant_search', methods = ['GET', 'POST'])
+@app.route('/restaurant_search', methods = ['GET'])
 def restaurant_search():
     restaurants = []
-    if request.method == 'POST':
-        field = request.form['field_name']
-        keywords = request.form['keywords']
+    field = request.args.get('field_name',type=str)
+    keywords = request.args.get('keywords',type=str)
+    if not field is None:
         client = pym.MongoClient()
         collection = client.database.restaurants
-        restaurants = list(collection.find({field: keywords}))
-        if 'user' in session:
-            return render_template('restaurant_search.html', username=session['user'],\
-                restaurants=restaurants)
-        else:
-            return render_template('restaurant_search.html', username=None,\
-                restaurants=restaurants)
+        restaurants = list(collection.find({field: keywords},{'address': 1, \
+                'cuisine': 1, 'borough': 1, 'name': 1, '_id': 0}))[:20]
+    if 'user' in session:
+        return render_template('restaurant_search.html', username=session['user'],\
+            restaurants=restaurants)
     else:
-        if 'user' in session:
-            return render_template('restaurant_search.html', username=session['user'],\
-                restaurants=restaurants)
-        else:
-            return render_template('restaurant_search.html', username=None,\
-                restaurants=restaurants)
+        return render_template('restaurant_search.html', username=None,\
+            restaurants=restaurants)
 
     return render_template('restaurant_search.html', username=session['user'])
+
+@app.route('/get_page')
+def get_page():
+    field = request.args.get('field',type=str)
+    keywords = request.args.get('keywords',type=str)
+    if "+" in keywords:
+        keywords = keywords.split("+")
+        keywords = " ".join(keywords)
+    number = request.args.get('number',type=int)
+    client = pym.MongoClient()
+    collection = client.database.restaurants
+    restaurants = list(collection.find({field: keywords},{'address': 1, \
+            'cuisine': 1, 'borough': 1, 'name': 1, '_id': 0}))[(number-1)*20:number*20]
+    return json.dumps(restaurants,ensure_ascii=False)
+
+@app.route('/get_number_of_pages')
+def get_number_of_pages():
+    field = request.args.get('field',type=str)
+    keywords = request.args.get('keywords',type=str)
+    number = request.args.get('number',type=int)
+    client = pym.MongoClient()
+    collection = client.database.restaurants
+    number = collection.count({field: keywords})
+    return str(number)
 
 @app.errorhandler(404)
 def page_not_found(error):
