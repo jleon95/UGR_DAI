@@ -106,32 +106,18 @@
         <select name="field_name" class="form-control col-md-4 col-sm-4 col-12" id="sel1">
           <option value="name">Name</option>
           <option value="cuisine">Cuisine</option>
-          <option value="zipcode">Zip code</option>
           <option value="borough">Borough</option>
         </select>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Search</button>
     </form>
     <div class="col-md-3"></div>
   </div>
-  {% if restaurants|length > 0 %}
     <div class="col-12">
       <br/>
       <h4>Search results:</h4>
       <br/>
     </div>
-    <ul id="rows" class="list-group">
-    {% for r in restaurants %}
-      <li class="list-group-item">
-        <div class="col-md-4">
-          <strong>{{ r['name'] }}</strong>.
-        </div>
-        <div class="col-md-8">
-          {{ r['address']['building'] }} {{ r['address']['street'] }}, {{ r['borough'] }}, {{ r['address']['zipcode'] }}.
-        </div>
-      </li>
-    {% endfor %}
-    </ul>
+    <ul id="rows" class="list-group"></ul>
     <br/>
     <ul id="page-numbers" class="pagination"></ul>
-  {% endif %}
 {% endblock %}
