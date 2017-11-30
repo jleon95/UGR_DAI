@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block styles %}
+  <link href="/static/register_style.css" rel="stylesheet">
+{% endblock %}
+{% block content %}
+  <div class="container data-form">
+
+    <form method="post" action={% url 'change_info' %} class="form-signup">
+      {% csrf_token %}
+      <h2 class="form-signup-heading">Change personal data</h2>
+      <input name="username" type="names" class="form-control" placeholder={{ username }} value={{ username }} required>
+      <input name="first_name" type="names" class="form-control" placeholder={{ first_name }} value={{ first_name }} required>
+      <input name="last_name" type="names" class="form-control" placeholder={{ last_name }} value={{ last_name }} required>
+      <br>
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Update</button>
+    </form>
+
+  </div>
+{% endblock %}
