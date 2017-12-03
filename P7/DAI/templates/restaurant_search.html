@@ -54,14 +54,18 @@
                 //Loop through each row and output the data
                 data = JSON.parse(data);
                 $(data).each(function(){
-                    $('#rows').append('<li class="list-group-item">'
+                    $('#rows').append(
+                    '<a class="row-ref" href="/restaurantes/edit_restaurant/?' + 'name=' + this.name + '&id=' + this.restaurant_id +'">'
+                    + '<li class="list-group-item">'
                       + '<div class="col-md-4">'
-                      + '<strong>' + this.name + '</strong>.'
+                      + '<strong id="rest_name">' + this.name + '</strong>.'
                       + '</div>'
                       + '<div class="col-md-8">'
                         + this.address.building + " " + this.address.street + ", " + this.borough + ", " + this.address.zipcode
                       + '</div>'
-                    + '</li>')
+                      + '<p id="rest_id" hidden>' + this.restaurant_id + '</p>'
+                    + '</li>'
+                    + '</a>')
                 });
             });
         }

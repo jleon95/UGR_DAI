@@ -14,4 +14,5 @@ urlpatterns = [
   url(r'^profile/$', views.profile, name='profile'),
   url(r'^change_info/$', views.change_info, name='change_info'),
   url(r'^add_restaurant/$', views.add_restaurant, name='add_restaurant'),
+  url(r'^edit_restaurant/$', views.edit_restaurant, name='edit_restaurant'),
 ]

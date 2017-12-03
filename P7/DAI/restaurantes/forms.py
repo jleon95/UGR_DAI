@@ -69,3 +69,27 @@ class add_restaurant_form(forms.Form):
     cuisine = forms.CharField(max_length=30,required=False,\
                     widget=forms.TextInput(attrs={'class': 'form-control'}),\
                     label='Cuisine')
+
+class edit_restaurant_form(forms.Form):
+    name = forms.CharField(max_length=60, strip=True,\
+                    widget=forms.TextInput(attrs={'class': 'form-control'}),\
+                    label='Name')
+    prev_name = forms.CharField(max_length=60, strip=True,\
+                    widget=forms.HiddenInput(attrs={'type': 'hidden'}))
+    r_id = forms.CharField(max_length=10, strip=True,\
+                    widget=forms.HiddenInput(attrs={'type': 'hidden'}))
+    street = forms.CharField(max_length=100,strip=True,\
+                    widget=forms.TextInput(attrs={'class': 'form-control'}),\
+                    label='Street')
+    building = forms.IntegerField(validators=[building_validation],\
+                    widget=forms.TextInput(attrs={'class': 'form-control'}),\
+                    label='Building number')
+    borough = forms.CharField(max_length=50,strip=True,\
+                    widget=forms.TextInput(attrs={'class': 'form-control'}),\
+                    label='Borough')
+    zipcode = forms.IntegerField(validators=[zipcode_validation],\
+                    widget=forms.TextInput(attrs={'class': 'form-control'}),\
+                    label='Zip code')
+    cuisine = forms.CharField(max_length=30,required=False,\
+                    widget=forms.TextInput(attrs={'class': 'form-control'}),\
+                    label='Cuisine')

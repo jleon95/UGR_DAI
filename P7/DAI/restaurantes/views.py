@@ -3,8 +3,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect
 from .models import collection
-from .forms import register_form, login_form, update_form, add_restaurant_form
+from .forms import register_form, login_form, update_form, add_restaurant_form, edit_restaurant_form
 from random import randint
+from pymongo import ReturnDocument
 import json
 import urllib as url
 
@@ -35,11 +36,40 @@ def add_restaurant(request):
 
     return render(request, 'add_restaurant.html', context)
 
+def edit_restaurant(request):
+    context = {}
+    if request.method == 'POST':
+        form = edit_restaurant_form(request.POST)
+        if form.is_valid():
+            d = form.cleaned_data
+            result = collection.find_one_and_update({'name': d['prev_name'], 'restaurant_id': d['r_id']},\
+                        {'$set': {'name': d['name'],'address.street': d['street'],\
+                        'address.building': d['building'],'borough': d['borough'],\
+                        'address.zipcode': d['zipcode'],'cuisine': d['cuisine']}},\
+                        return_document=ReturnDocument.AFTER)
+            context['r_id'] = result['restaurant_id']
+            context['name'] = result['name']
+            context['street'] = result['address']['street']
+            context['building'] = result['address']['building']
+            context['borough'] = result['borough']
+            context['zipcode'] = result['address']['zipcode']
+            context['cuisine'] = result['cuisine']
+    else:
+        name = request.GET.get('name')
+        restaurant_id = request.GET.get('id')
+        restaurant = collection.find_one({'name': name, 'restaurant_id': restaurant_id})
+        context['r_id'] = restaurant_id
+        context['name'] = restaurant['name']
+        context['street'] = restaurant['address']['street']
+        context['building'] = restaurant['address']['building']
+        context['borough'] = restaurant['borough']
+        context['zipcode'] = restaurant['address']['zipcode']
+        context['cuisine'] = restaurant['cuisine']
+    return render(request, 'edit_restaurant.html', context)
 
 def register(request):
 	form = register_form()
 	context = {'message': 'We are in Register', 'form': form}
-
 	if request.method == 'POST':
 		form = register_form(request.POST)
 		if form.is_valid():
@@ -87,7 +117,6 @@ def login_view(request):
 	return render(request, 'index.html', context)
 
 def logout_view(request):
-    context = {}
     logout(request)
     return HttpResponseRedirect('/restaurantes/')
 
@@ -118,7 +147,8 @@ def get_page(request):
     keywords = url.parse.unquote_plus(keywords)
     number = int(parameters['number'])
     restaurants = list(collection.find({field: keywords},{'address': 1, \
-            'cuisine': 1, 'borough': 1, 'name': 1, '_id': 0}))[(number-1)*20:number*20]
+            'cuisine': 1, 'borough': 1, 'name': 1, 'restaurant_id':1,\
+             '_id': 0}))[(number-1)*20:number*20]
     return HttpResponse(json.dumps(restaurants,ensure_ascii=False))
 
 def get_number_of_pages(request):
