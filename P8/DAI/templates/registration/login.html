@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block styles %}
+  <link href="/static/style.css" rel="stylesheet">
+  <link href="/static/register_style.css" rel="stylesheet">
+{% endblock %}
+{% block content %}
+  {% load registration_bootstrap %}
+  <div class="container">
+    <br/>
+    <form method="post" action="." class="form-signup">
+      <h2 class="form-signup-heading">Login</h2>
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field|add_class:'form-control' }}
+            {% if field.errors %}
+                <span class="text-danger">{{ field.errors|join:'<br/>' }}</span>
+            {% endif %}
+            {% if field.help_text %}
+                <span class="help-block">{{ field.help_text|safe }}</span>
+            {% endif %}
+        </div>
+      {% endfor %}
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      <input type="hidden" name="next" value="{{ next }}" />
+    </form>
+    <p class="starter-template">Not a member? <a href="{% url 'registration_register' %}">Register</a></p>
+  </div>
+{% endblock %}

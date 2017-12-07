@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block navbar %}
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <!--<a class="navbar-brand" href="#">Navbar</a>-->
+    <img src="/static/catlogo.png" height="20px"/>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="/restaurantes">Home<span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/restaurantes/ai">AI</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/restaurantes/restaurant_search">Restaurants</a>
+        </li>
+        {% if request.user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="/restaurantes/profile">Profile</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/restaurantes/change_info">Modify data</a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="/restaurantes/register">Register</a>
+        </li>
+        {%endif%}
+      </ul>
+      {% if request.user.is_authenticated %}
+        <form action="{% url 'auth_logout' %}?next=/restaurantes/" method="post" class="form-inline my-2 my-lg-0">
+          {% csrf_token %}
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Log out</button>
+        </form>
+      {% else %}
+        <form method="post" action="{% url 'auth_login' %}" class="form-inline my-2 my-lg-0">
+          {% csrf_token %}
+          <div class='form-group'>
+              <input class="form-control mr-sm-2" name="username" type="text" placeholder="Username" required/>
+          </div>
+          <div class='form-group'>
+              <input class="form-control mr-sm-2" name="password" type="password" placeholder="Password" required>
+          </div>
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Log in</button>
+        </form>
+      {% endif %}
+    </div>
+</nav>
+{% endblock %}
+{% block content %}
+  <div class="starter-template">
+    <p>Username: <strong>{{ username }}</strong></p>
+    <p>Email: <strong>{{ email }}</strong></p>
+  </div>
+{% endblock %}

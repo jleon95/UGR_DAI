@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block styles %}
+  <link href="/static/style.css" rel="stylesheet">
+  <link href="/static/register_style.css" rel="stylesheet">
+{% endblock %}
+{% block content %}
+  <div class="container">
+    <br/>
+    <form method="post" action={% url 'add_restaurant' %} class="form-signup">
+      <h2 class="form-signup-heading">New restaurant entry</h2>
+      <br/>
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+    </form>
+  </div>
+{% endblock %}
