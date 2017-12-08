@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block custom_scripts %}
+  <!-- Get search parameters from url -->
+  <script>
+    function GetURLParameter(sParam)
+    {
+        var sPageURL = window.location.search.substring(1);
+        var sURLVariables = sPageURL.split('&');
+        for (var i = 0; i < sURLVariables.length; i++)
+        {
+            var sParameterName = sURLVariables[i].split('=');
+            if (sParameterName[0] == sParam)
+            {
+                return sParameterName[1];
+            }
+        }
+        return (-1)
+    }
+  </script>
+  <!-- Initialize list of page numbers -->
+  <script>
+    var rows_per_page = 20
+    function initPageNumbers(){
+        if(GetURLParameter('field_name') != -1){
+            var my_field = GetURLParameter('field_name');
+            var my_keywords = GetURLParameter('keywords');
+            //Get total rows number
+            $.get('/restaurantes/get_number_of_pages',{field: my_field, keywords: my_keywords},function(data){
+                total_rows = parseInt(data);
+                //Loop through every available page and output a page link
+                var count = 1;
+                for(var x = 0;  x < total_rows; x += rows_per_page)
+                {
+                    $('#page-numbers').append('<li><a href="#'+count+'" onclick="getPage('+count+');">'+count+'</a></li>');
+                    count++;
+                }
+            });
+        }
+    }
+  </script>
+  <!-- Get a page of results -->
+  <script>
+    function getPage(page_num)
+    {
+        if(GetURLParameter('field_name') != -1){
+            //Clear the existing data view
+            $('#rows').html('');
+            var my_field = GetURLParameter('field_name');
+            var my_keywords = GetURLParameter('keywords');
+            $("#page-numbers > li").removeClass('active')
+            $("#page-numbers li:eq("+(page_num-1)+")").addClass('active');
+            //Get subset of data
+            $.get('/restaurantes/get_page',{field: my_field, keywords: my_keywords, number: page_num},function(data){
+                //Loop through each row and output the data
+                data = JSON.parse(data);
+                $(data).each(function(){
+                    $('#rows').append(
+                    '<a class="row-ref" href="/restaurantes/edit_restaurant/?' + 'name=' + this.name + '&id=' + this.restaurant_id +'">'
+                    + '<li class="list-group-item">'
+                      + '<div class="col-md-4">'
+                      + '<strong id="rest_name">' + this.name + '</strong>.'
+                      + '</div>'
+                      + '<div class="col-md-8">'
+                        + this.address.building + " " + this.address.street + ", " + this.borough + ", " + this.address.zipcode
+                      + '</div>'
+                      + '<p id="rest_id" hidden>' + this.restaurant_id + '</p>'
+                    + '</li>'
+                    + '</a>')
+                });
+            });
+        }
+    }
+  </script>
+  <!-- Run as soon as the page is ready to run JavaScript code -->
+  <script>
+  $(document).ready(function(){
+      //Set up the page number links
+      initPageNumbers();
+
+      //Set the default page number
+      var page_num = 1;
+
+      //If there's a hash fragment specifying a page number
+      if(window.location.hash !== '')
+      {
+          //Get the hash fragment as an integer
+          var hash_num = parseInt(window.location.hash.substring(1));
+
+          //If the hash fragment integer is valid
+          if(hash_num > 0)
+          {
+              //Overwrite the default page number with the user supplied number
+              page_num = hash_num;
+          }
+      }
+
+      //Load the first page
+      getPage(page_num);
+  });
+  </script>
+{% endblock %}
+{% block styles %}
+  <link href="/static/style.css" rel="stylesheet">
+  <link href="/static/register_style.css" rel="stylesheet">
+{% endblock %}
+{% block content %}
+  <div class="row col-12">
+    <div class="col-md-4"></div>
+    <h2 class="col-md-4 title">New restaurant</h2>
+    <div class="col-md-4"></div>
+  </div>
+  <br/>
+  <div class="row">
+      <div class="col-md-4"></div>
+      <a href="/restaurantes/add_restaurant" class="btn btn-lg btn-primary btn-block col-md-4 col-4" role="button">Create new entry</a>
+      <div class="col-md-4"></div>
+  </div>
+
+  <div class="row col-12">
+    <div class="col-md-3"></div>
+    <h2 class="col-md-6 title">Search for restaurants</h2>
+    <div class="col-md-3"></div>
+  </div>
+  <div class="row">
+    <div class="col-md-3"></div>
+    <form method="get" class="row form-inline form-signup container data-form col-md-6 col-6">
+        <input name="keywords" type="names" class="form-control col-md-8 col-sm-8 col-12" placeholder="Keyword(s)" required>
+        <select name="field_name" class="form-control col-md-4 col-sm-4 col-12" id="sel1">
+          <option value="name">Name</option>
+          <option value="cuisine">Cuisine</option>
+          <option value="borough">Borough</option>
+        </select>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Search</button>
+    </form>
+    <div class="col-md-3"></div>
+  </div>
+    <div class="col-12">
+      <br/>
+      <h4>Search results:</h4>
+      <br/>
+    </div>
+    <ul id="rows" class="list-group"></ul>
+    <br/>
+    <ul id="page-numbers" class="pagination"></ul>
+{% endblock %}

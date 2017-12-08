@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block custom_scripts %}
+  <script>
+  function initMap(latitude,longitude) {
+    var location = {lat: parseFloat(latitude), lng: parseFloat(longitude)};
+    var map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 4,
+      center: location
+    });
+    var marker = new google.maps.Marker({
+      position: location,
+      map: map
+    });
+  }
+  </script>
+  <!--Place here your own API key-->
+  <script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY&callback=initMap">
+  </script>
+{% endblock %}
+{% block styles %}
+  <link href="/static/style.css" rel="stylesheet">
+  <link href="/static/register_style.css" rel="stylesheet">
+{% endblock %}
+{% block content %}
+  <div class="container">
+    <br/>
+    <form method="post" action={% url 'edit_restaurant' %} class="form-signup">
+      <h2 class="form-signup-heading">Restaurant details</h2>
+      <br/>
+      {% csrf_token %}
+      <p><label for="id_name">Name:</label> <input type="text" name="name" value="{{ name }}" id="id_name" required maxlength="60" class="form-control" /></p>
+      <input hidden type="text" name="prev_name" value="{{ name }}" required maxlength="60" class="form-control" />
+      <input hidden type="text" name="r_id" value="{{ r_id }}" required maxlength="10" class="form-control" />
+      <p><label for="id_street">Street:</label> <input type="text" name="street" value="{{ street }}" id="id_street" required maxlength="100" class="form-control" /></p>
+      <p><label for="id_building">Building number:</label> <input type="text" name="building" value="{{ building }}" id="id_building" required class="form-control" /></p>
+      <p><label for="id_borough">Borough:</label> <input type="text" name="borough" value="{{ borough }}" id="id_borough" required maxlength="50" class="form-control" /></p>
+      <p><label for="id_zipcode">Zip code:</label> <input type="text" name="zipcode" value="{{ zipcode }}" id="id_zipcode" required class="form-control" /></p>
+      <p><label for="id_longitude">Longitude:</label> <input type="text" name="longitude" value="{{ longitude }}" id="id_longitude" required class="form-control" /></p>
+      <p><label for="id_latitude">Latitude:</label> <input type="text" name="latitude" value="{{ latitude }}" id="id_latitude" required class="form-control" /></p>
+      <p><label for="id_cuisine">Cuisine:</label> <input type="text" name="cuisine" value="{{ cuisine }}" id="id_cuisine" maxlength="30" class="form-control" /></p>
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+    </form>
+  </div>
+  <br/>
+  <div class="row">
+    <div class="col-sm-3"></div>
+    <div class="starter-template col-sm-6" id="map">
+        <script>initMap({{ latitude }},{{ longitude }})</script>
+    </div>
+    <div class="col-sm-3"></div>
+  </div>
+{% endblock %}
