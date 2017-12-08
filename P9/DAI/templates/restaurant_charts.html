@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block custom_scripts %}
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script>
+  $.get('/restaurantes/get_cuisine_stats', function (list) {
+
+    list = JSON.parse(list);
+    Highcharts.chart('first_chart', {
+
+        chart: {
+            type: 'bar'
+        },
+
+        title: {
+            text: '<strong>Cuisine types and frequency<strong>'
+        },
+
+        xAxis: {
+            type: 'category',
+            labels: {
+                style: {
+                    fontSize: '16px',
+                    fontFamily: 'Verdana, sans-serif'
+                }
+            }
+        },
+
+        yAxis: {
+            min: 0,
+            title: {
+                text: "Count"
+            }
+        },
+
+        legend: {
+            enabled: false
+        },
+
+        tooltip: {
+            pointFormat: '<strong>{point.y}</strong>'
+        },
+
+        series: [{
+            name: 'Occurrences',
+            data: list,
+            dataLabels: {
+                enabled: true,
+                color: '#FFFFFF',
+                align: 'right',
+                style: {
+                    fontSize: '15px',
+                    fontFamily: 'Verdana, sans-serif'
+                }
+            }
+        }]
+    });
+  });
+  </script>
+{% endblock %}
+{% block content %}
+  <br/>
+  <div class="container" id="first_chart" style="width:80%; height:1700px;"></div>
+  <br/>
+{% endblock %}

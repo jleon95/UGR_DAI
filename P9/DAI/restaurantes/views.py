@@ -151,6 +151,10 @@ def restaurant_search(request):
     context = {}
     return render(request,'restaurant_search.html',context)
 
+def restaurant_charts(request):
+    context = {}
+    return render(request,'restaurant_charts.html',context)
+
 def get_page(request):
     parameters = request.GET
     field = parameters['field']
@@ -169,3 +173,10 @@ def get_number_of_pages(request):
     keywords = url.parse.unquote_plus(keywords)
     number = collection.count({field: keywords})
     return HttpResponse(str(number))
+
+def get_cuisine_stats(request):
+    pairs = []
+    types = sorted(collection.distinct("cuisine"))
+    for t in types:
+        pairs.append([t,collection.find({"cuisine": t}).count()])
+    return HttpResponse(json.dumps(pairs,ensure_ascii=False))

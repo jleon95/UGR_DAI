@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 {% block custom_scripts %}
+<!--Place here your own API key-->
+  <script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY&callback=initMap">
+  </script>
   <script>
   function initMap(latitude,longitude) {
     var location = {lat: parseFloat(latitude), lng: parseFloat(longitude)};
@@ -12,10 +16,6 @@
       map: map
     });
   }
-  </script>
-  <!--Place here your own API key-->
-  <script async defer
-  src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY&callback=initMap">
   </script>
 {% endblock %}
 {% block styles %}
