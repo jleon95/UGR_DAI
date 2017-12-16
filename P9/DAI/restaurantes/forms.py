@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from registration.forms import RegistrationForm
 
 def building_validation(number):
-    if number < 1 or number > 2000:
+    if number < 1 or number > 10000:
         raise ValidationError("%s doesn't seem to be a building number" % number)
 
 def zipcode_validation(number):
@@ -58,10 +58,10 @@ class login_form(forms.ModelForm):
         fields = ('username', 'password')
 
 class add_restaurant_form(forms.Form):
-    name = forms.SlugField(max_length=60, strip=True,\
+    name = forms.CharField(max_length=60, strip=True,\
                     widget=forms.TextInput(attrs={'class': 'form-control'}),\
                     label='Name')
-    street = forms.CharField(max_length=100,strip=True,\
+    street = forms.CharField(max_length=150,strip=True,\
                     widget=forms.TextInput(attrs={'class': 'form-control'}),\
                     label='Street')
     building = forms.IntegerField(validators=[building_validation],\
@@ -84,14 +84,14 @@ class add_restaurant_form(forms.Form):
                     label='Latitude')
 
 class edit_restaurant_form(forms.Form):
-    name = forms.SlugField(max_length=60, strip=True,\
+    name = forms.CharField(max_length=60, strip=True,\
                     widget=forms.TextInput(attrs={'class': 'form-control'}),\
                     label='Name')
     prev_name = forms.CharField(max_length=60, strip=True,\
                     widget=forms.HiddenInput(attrs={'type': 'hidden'}))
-    r_id = forms.CharField(max_length=10, strip=True,\
+    r_id = forms.CharField(max_length=20, strip=True,\
                     widget=forms.HiddenInput(attrs={'type': 'hidden'}))
-    street = forms.CharField(max_length=100,strip=True,\
+    street = forms.CharField(max_length=150,strip=True,\
                     widget=forms.TextInput(attrs={'class': 'form-control'}),\
                     label='Street')
     building = forms.IntegerField(validators=[building_validation],\
@@ -107,8 +107,8 @@ class edit_restaurant_form(forms.Form):
                     widget=forms.TextInput(attrs={'class': 'form-control'}),\
                     label='Cuisine')
     longitude = forms.FloatField(validators=[longitude_validation],\
-                    widget=forms.TextInput(attrs={'class': 'form-control'}),\
-                    label='Longitude')
+                   widget=forms.TextInput(attrs={'class': 'form-control'}),\
+                   label='Longitude')
     latitude = forms.FloatField(validators=[latitude_validation],\
-                    widget=forms.TextInput(attrs={'class': 'form-control'}),\
-                    label='Latitude')
+                   widget=forms.TextInput(attrs={'class': 'form-control'}),\
+                   label='Latitude')

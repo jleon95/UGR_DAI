@@ -24,7 +24,7 @@ def add_restaurant(request):
                         "street": d['street'],
                         "zipcode": d['zipcode'],
                         "building": d['building'],
-                        "coord": []
+                        "coord": [d['longitude'],d['latitude']]
                     },
                     "borough": d['borough'],
                     "cuisine": d['cuisine'],
@@ -42,29 +42,30 @@ def edit_restaurant(request):
         form = edit_restaurant_form(request.POST)
         if form.is_valid():
             d = form.cleaned_data
-            result = collection.find_one_and_update({'name': d['prev_name'], 'restaurant_id': d['r_id']},\
+            r = collection.find_one_and_update({'name': d['prev_name'], 'restaurant_id': d['r_id']},\
                         {'$set': {'name': d['name'],'address.street': d['street'],\
                         'address.building': d['building'],'borough': d['borough'],\
-                        'address.zipcode': d['zipcode'],'cuisine': d['cuisine']}},\
+                        'address.zipcode': d['zipcode'],'cuisine': d['cuisine'],\
+                        'address.coord': [d['longitude'],d['latitude']]}},\
                         return_document=ReturnDocument.AFTER)
-            context['r_id'] = result['restaurant_id']
-            context['name'] = result['name']
-            context['street'] = result['address']['street']
-            context['building'] = result['address']['building']
-            context['borough'] = result['borough']
-            context['zipcode'] = result['address']['zipcode']
-            context['cuisine'] = result['cuisine']
+            data = {'r_id': d['r_id'], 'name': r['name'], 'prev_name': r['name'],\
+                    'street': r['address']['street'], 'building': r['address']['building'],\
+                    'borough': r['borough'], 'zipcode': r['address']['zipcode'],\
+                    'cuisine': r['cuisine'], 'longitude': r['address']['coord'][0],\
+                    'latitude': r['address']['coord'][1]}
+            form = edit_restaurant_form(data)
+        context['form'] = form
     else:
         name = request.GET.get('name')
         restaurant_id = request.GET.get('id')
-        restaurant = collection.find_one({'name': name, 'restaurant_id': restaurant_id})
-        context['r_id'] = restaurant_id
-        context['name'] = restaurant['name']
-        context['street'] = restaurant['address']['street']
-        context['building'] = restaurant['address']['building']
-        context['borough'] = restaurant['borough']
-        context['zipcode'] = restaurant['address']['zipcode']
-        context['cuisine'] = restaurant['cuisine']
+        r = collection.find_one({'name': name, 'restaurant_id': restaurant_id})
+        data = {'r_id': restaurant_id, 'name': name, 'prev_name': name,\
+                'street': r['address']['street'], 'building': r['address']['building'],\
+                'borough': r['borough'], 'zipcode': r['address']['zipcode'],\
+                'cuisine': r['cuisine'], 'longitude': r['address']['coord'][0],\
+                'latitude': r['address']['coord'][1]}
+        form = edit_restaurant_form(data)
+        context['form'] = form
     return render(request, 'edit_restaurant.html', context)
 
 def register(request):
