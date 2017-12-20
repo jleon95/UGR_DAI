@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% block custom_scripts %}
-<!--Place here your own API key-->
 
 {% endblock %}
 {% block styles %}
@@ -34,8 +33,9 @@
       });
     }
     </script>
+    <!--Place your own API key here-->
     <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCbnsWJps9e8iK06CTRgE_bSmdGrvOtYxo&callback=window.initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY&callback=window.initMap">
     </script>
     <div class="starter-template col-sm-6" id="map">
 
